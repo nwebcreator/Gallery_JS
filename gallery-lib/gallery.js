@@ -8,6 +8,9 @@ class Gallery {
         this.size = element.childElementCount;
         this.currentSlide = 0;
         this. currentSlideWasChanged = false;
+        this.settings = {
+            margin: options.margin || 0
+        }
 
 
         this.manageHTML = this.manageHTML.bind(this); // чтобы при вызове методов не слетали контексты, например если методы вызываются в событиях - переопределяем метод и добавляем bind(this), тем самым методы всегда будут точно вызываться с контекстом this
@@ -44,12 +47,15 @@ class Gallery {
     setParameters() {
         const coordsContainer = this.containerNode.getBoundingClientRect();
         this.width = coordsContainer.width;
-        this.maximumX = -(this.size -1) * this.width;
-        this.x = -this.currentSlide * this.width;
+        this.maximumX = -(this.size -1) * (this.width + this.settings.margin);
+        this.x = -this.currentSlide * (this.width + this.settings.margin);
 
-        this.lineNode.style.width = `${this.size * this.width}px`;
+        this.resetStyleTransition();
+        this.lineNode.style.width = `${this.size * (this.width + this.settings.margin)}px`;
+        this.setStylePosition();
         Array.from(this.slideNodes).forEach((slideNode) => {
             slideNode.style.width =`${this.width}px`;
+            slideNode.style.marginRight =`${this.settings.margin}px`;
         });
     }
 
@@ -62,6 +68,8 @@ class Gallery {
 
     destroyEvents() {
         window.removeEventListener('resize', this.debounceResizeGallery);
+        this.lineNode.removeEventListener('pointerdown', this.startDrag);
+        window.removeEventListener('pointerup', this.stopDrag);
     }
 
     resizeGallery() {
@@ -78,7 +86,7 @@ class Gallery {
 
     stopDrag() {
         window.removeEventListener('pointermove', this.dragging);
-        this.x = -this.currentSlide * this.width;
+        this.x = -this.currentSlide * (this.width + this.settings.margin);
         this.setStylePosition();
         this.setStyleTransition();
     }
@@ -145,5 +153,3 @@ function debounce(func, time = 100) {
         timer = setTimeout(func, time, event);
     }
 }
-
-// 19:10
