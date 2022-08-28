@@ -7,6 +7,7 @@ class Gallery {
         this.containerNode = element;
         this.size = element.childElementCount;
         this.currentSlide = 0;
+        this. currentSlideWasChanged = false;
 
 
         this.manageHTML = this.manageHTML.bind(this); // чтобы при вызове методов не слетали контексты, например если методы вызываются в событиях - переопределяем метод и добавляем bind(this), тем самым методы всегда будут точно вызываться с контекстом this
@@ -43,6 +44,7 @@ class Gallery {
     setParameters() {
         const coordsContainer = this.containerNode.getBoundingClientRect();
         this.width = coordsContainer.width;
+        this.x = -this.currentSlide * this.width;
 
         this.lineNode.style.width = `${this.size * this.width}px`;
         Array.from(this.slideNodes).forEach((slideNode) => {
@@ -65,23 +67,49 @@ class Gallery {
         this.setParameters(); // нужно пересчитать ширину основного контейнера и ширину слайдов
     }
 
-    startDrag() {
+    startDrag(evt) {
+        this.currentSlideWasChanged = false;
         this.clickX = evt.pageX;
+        this.startX = this.x;
         window.addEventListener('pointermove', this.dragging);
     }
 
     stopDrag() {
         window.removeEventListener('pointermove', this.dragging);
+        this.x = -this.currentSlide * this.width;
+        this.setStylePosition();
     }
 
     dragging(evt) {
         this.dragX = evt.pageX;
         const dragShift = this.dragX - this.clickX;
-        this.setStylePosition(dragShift);
+        this.x = this.x + dragShift;
+        this.setStylePosition();
+
+        // Change active slide
+        if (
+            dragShift > 20 &&
+            dragShift > 0 &&
+            !this.currentSlideWasChanged &&
+            this.currentSlide > 0
+        ) {
+            this.currentSlideWasChanged = true;
+            this.currentSlide = this.currentSlide - 1;
+        }
+
+        if (
+            dragShift < -20 &&
+            dragShift < 0 &&
+            !this.currentSlideWasChanged &&
+            this.currentSlide < this.size - 1
+        ) {
+            this.currentSlideWasChanged = true;
+            this.currentSlide = this.currentSlide + 1;
+        }
     }
 
     setStylePosition(shift) {
-        this.lineNode.style.transform = `translate3d(${shift}px, 0, 0)`;
+        this.lineNode.style.transform = `translate3d(${this.x}px, 0, 0)`;
     }
 }
 
@@ -103,3 +131,5 @@ function debounce(func, time = 100) {
         timer = setTimeout(func, time, event);
     }
 }
+
+// 19:10
