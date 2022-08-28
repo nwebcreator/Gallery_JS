@@ -1,6 +1,11 @@
 .gallery {
     width: 100%;
     overflow: hidden;
+    user-select: none;
+}
+
+.gallery-draggable {
+    cursor: grabbing;
 }
 
 .gallery-line {

@@ -1,4 +1,5 @@
 const GalleryClassName = 'gallery';
+const GalleryDraggableClassName = 'gallery-draggable';
 const GalleryLineClassName = 'gallery-line';
 const GallerySlideClassName = 'gallery-slide';
 
@@ -80,12 +81,18 @@ class Gallery {
         this.currentSlideWasChanged = false;
         this.clickX = evt.pageX;
         this.startX = this.x;
+
         this.resetStyleTransition();
+
+        this.containerNode.classList.add('GalleryDraggableClassName');
         window.addEventListener('pointermove', this.dragging);
     }
 
     stopDrag() {
         window.removeEventListener('pointermove', this.dragging);
+
+        this.containerNode.classList.remove('GalleryDraggableClassName');
+
         this.x = -this.currentSlide * (this.width + this.settings.margin);
         this.setStylePosition();
         this.setStyleTransition();
