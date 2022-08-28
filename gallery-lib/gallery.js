@@ -65,12 +65,14 @@ class Gallery {
         window.addEventListener('resize', this.debounceResizeGallery);
         this.lineNode.addEventListener('pointerdown', this.startDrag);
         window.addEventListener('pointerup', this.stopDrag);
+        window.addEventListener('pointercansel', this.stopDrag);
     }
 
     destroyEvents() {
         window.removeEventListener('resize', this.debounceResizeGallery);
         this.lineNode.removeEventListener('pointerdown', this.startDrag);
         window.removeEventListener('pointerup', this.stopDrag);
+        window.removeEventListener('pointercansel', this.stopDrag);
     }
 
     resizeGallery() {
