@@ -13,11 +13,14 @@ class Gallery {
         this.setParameters = this.setParameters.bind(this);
         this.setEvents = this.setEvents.bind(this);
         this.resizeGallery = this.resizeGallery.bind(this);
+        this.startDrag = this.startDrag.bind(this);
+        this.stopDrag = this.stopDrag.bind(this);
+        this.dragging = this.dragging.bind(this);
+        this.setStylePosition = this.setStylePosition.bind(this);
 
         this.manageHTML();
         this.setParameters();
         this.setEvents();
-        this.destroyEvents();
     }
 
     manageHTML() {
@@ -50,6 +53,8 @@ class Gallery {
     setEvents() {
         this.debounceResizeGallery = debounce(this.resizeGallery);
         window.addEventListener('resize', this.debounceResizeGallery);
+        this.lineNode.addEventListener('pointerdown', this.startDrag);
+        window.addEventListener('pointerup', this.stopDrag);
     }
 
     destroyEvents() {
@@ -58,6 +63,25 @@ class Gallery {
 
     resizeGallery() {
         this.setParameters(); // нужно пересчитать ширину основного контейнера и ширину слайдов
+    }
+
+    startDrag() {
+        this.clickX = evt.pageX;
+        window.addEventListener('pointermove', this.dragging);
+    }
+
+    stopDrag() {
+        window.removeEventListener('pointermove', this.dragging);
+    }
+
+    dragging(evt) {
+        this.dragX = evt.pageX;
+        const dragShift = this.dragX - this.clickX;
+        this.setStylePosition(dragShift);
+    }
+
+    setStylePosition(shift) {
+        this.lineNode.style.transform = `translate3d(${shift}px, 0, 0)`;
     }
 }
 
