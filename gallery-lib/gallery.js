@@ -44,6 +44,7 @@ class Gallery {
     setParameters() {
         const coordsContainer = this.containerNode.getBoundingClientRect();
         this.width = coordsContainer.width;
+        this.maximumX = -(this.size -1) * this.width;
         this.x = -this.currentSlide * this.width;
 
         this.lineNode.style.width = `${this.size * this.width}px`;
@@ -85,7 +86,9 @@ class Gallery {
     dragging(evt) {
         this.dragX = evt.pageX;
         const dragShift = this.dragX - this.clickX;
-        this.x = this.x + dragShift;
+        const easing = dragShift / 5;
+        this.x = Math.max(Math.min(this.x + dragShift, easing), this.maximumX + easing);
+
         this.setStylePosition();
 
         // Change active slide
