@@ -45,7 +45,7 @@ class Gallery {
             ${this.containerNode.innerHTML}
         </div>
         <div class="${GalleryNavClassName}">
-            <button class="${GalleryNavLeftClassName}}">Left</button>
+            <button class="${GalleryNavLeftClassName}">Left</button>
             <button class="${GalleryNavRightClassName}">Right</button>
         </div>
         <div class="${GalleryDotsClassName}"></div>
@@ -66,7 +66,7 @@ class Gallery {
 
         this.dotNodes = this.dotsNode.querySelectorAll(`.${GalleryDotClassName}`);
         this.navLeft = this.containerNode.querySelector(`.${GalleryNavLeftClassName}`);
-        this.navRight = this.containerNode.querySelector(`.${GalleryNavLeftClassName}`);
+        this.navRight = this.containerNode.querySelector(`.${GalleryNavRightClassName}`);
     }
 
     setParameters() {
@@ -75,9 +75,9 @@ class Gallery {
         this.maximumX = -(this.size -1) * (this.width + this.settings.margin);
         this.x = -this.currentSlide * (this.width + this.settings.margin);
 
-        this.resetStyleTransition();
+        this.resetStyleTransition(); // for resize reset parameters - transition All
         this.lineNode.style.width = `${this.size * (this.width + this.settings.margin)}px`;
-        this.setStylePosition();
+        this.setStylePosition(); // for resize reset parameters - transition All
         Array.from(this.slideNodes).forEach((slideNode) => {
             slideNode.style.width =`${this.width}px`;
             slideNode.style.marginRight =`${this.settings.margin}px`;
@@ -91,7 +91,7 @@ class Gallery {
         window.addEventListener('pointerup', this.stopDrag);
         window.addEventListener('pointercansel', this.stopDrag);
 
-        this.dotsNodes.addEventListener('click', this.clickDots);
+        this.dotsNode.addEventListener('click', this.clickDots);
         this.navLeft.addEventListener('click', this.moveToLeft);
         this.navRight.addEventListener('click', this.moveToRight);
     }
@@ -166,9 +166,9 @@ class Gallery {
         }
 
         let dotNumber;
-        for(let i = 0; i < this.dotNodes.lenght; i++) {
+        for(let i = 0; i < this.dotNodes.length; i++) {
             if(this.dotNodes[i] === dotNode) {
-                dotNumber = 1;
+                dotNumber = i;
                 break;
             }
         }
@@ -187,7 +187,7 @@ class Gallery {
             return;
         }
 
-        this.currentSlide >= this.currentSlide - 1;
+        this.currentSlide = this.currentSlide - 1;
         this.changeCurrentSlide();
     }
 
